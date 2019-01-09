@@ -4,11 +4,13 @@ $(document).ready(function() {
 
 
   function cleanData (obj_data) {
-
     var newObject = {}
+    var newObject_2 = {}
+
     for (var i = 0; i < obj_data.length; i++) {
       // console.log(obj_data[i]['salesman']);
       // console.log(obj_data[i]['amount']);
+
 
 
       //questa e' la parte importante: creo un oggetto che mi raggruppa i nomi uguali e mi somma i singoli amount di ogni valore
@@ -21,8 +23,24 @@ $(document).ready(function() {
       //poi vado a sommare l amount
       newObject[obj_data[i]['salesman']] += obj_data[i]['amount']
 
-    }
+      //parte delle date di vendita---
+      //prima tramite moment.js ottengo solo il valore del mese e lo sostituisco alla data nell oggetto
+      var data_vendita = obj_data[i].date
+      // console.log(data_vendita);
+      // console.log(moment(data_vendita));
+      var mese_vendita = moment(data_vendita, 'DD/MM/YYYY').format('M')
+      // console.log(mese_vendita);
+      obj_data[i].date = mese_vendita
+      // console.log(obj_data[i].date);
+      //poi uso lo stesso metodo che avevo utilizzato sopra per i salesman
+      if (newObject_2[obj_data[i]['date']] == undefined) {
+        newObject_2[obj_data[i]['date']] = 0;
+      }
 
+      newObject_2[obj_data[i]['date']] += obj_data[i]['amount']
+
+    }
+    console.log(newObject_2);
 
     var arrLabels = [];
     var arrValues = []
@@ -36,32 +54,40 @@ $(document).ready(function() {
     var somma = 0;
     for (var i = 0; i < arrValues.length; i++) {
       somma += arrValues[i]
-      // console.log(arrValues[i]);
+      console.log(arrValues[i]);
     }
     for (var i = 0; i < arrValues.length; i++) {
       arrValues[i] = ((arrValues[i]/somma)*100).toFixed(2);
     }
-    // console.log(somma);
+    console.log(somma);
 
+    //stessa cosa per il fatturato mensile
+    var arrMonths = []
+    for (var key in newObject_2) {
+        arrMonths.push(newObject_2[key]);
+    }
+    console.log(arrMonths);
 
     //per far uscire da questa funzione i valori ottenuti devo per forza usare return
     //Questa funzione mi ritorna un oggetto.
     return {
       labels: arrLabels,
       values: arrValues,
+      dates: arrMonths,
     }
   }
 
-  function getData() {
+  function getData_1() {
     $.ajax({
       url: urlApi,
       method: 'GET',
       success: function(data) {
         // console.log(data);
-        cleanData(data)
+        // cleanData(data)
+        // cleanData :IMPORTANTE non va assolutamente chiamata! a me basta richiamare i risultati dell oggetto di return, caso per caso.
         // console.log(cleanData(data).labels);
         // console.log(cleanData(data).data);
-        // console.log(cleanData(data).tot_revenue);
+        // console.log(cleanData(data).dates);
         //****************
         //****GRAFICI*****
         //****************
@@ -75,14 +101,11 @@ $(document).ready(function() {
 
           // The data for our dataset
           data: {
-            // labels: ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto"],
             labels: cleanData(data).labels,
             datasets: [{
-              // label: ,
               backgroundColor: ['lightblue', 'lightcoral', 'lightyellow', 'lightgreen'],
               data: cleanData(data).values,
             }]
-            //--------------
           },
           // Configuration options go here
           options: {
@@ -97,6 +120,8 @@ $(document).ready(function() {
             },
           }
         });
+        //--------------
+
       },
       error: function() {
         alert('errore');
@@ -104,45 +129,53 @@ $(document).ready(function() {
     })
   }
 
-  getData()
+  function getData_2() {
+    $.ajax({
+      url: urlApi,
+      method: 'GET',
+      success: function(data) {
+        // console.log(data);
+        // cleanData(data)
+        // cleanData :IMPORTANTE non va assolutamente chiamata! a me basta richiamare i risultati dell oggetto di return, caso per caso.
+        // console.log(cleanData(data).labels);
+        // console.log(cleanData(data).data);
+        // console.log(cleanData(data).dates);
+        //****************
+        //****GRAFICI*****
+        //****************
 
 
+        //GRAFICO A LINEA
+          var ctx_2 = $('#lineChart');
+          var chart_2 = new Chart(ctx_2, {
+            // The type of chart we want to create
+            type: 'line',
 
-
-
-
-
-
-
-
-//GRAFICO A LINEA
-  var ctx_2 = $('#lineChart');
-  var chart_2 = new Chart(ctx_2, {
-    // The type of chart we want to create
-    type: 'line',
-
-    // The data for our dataset
-    data: {
-      labels: ["January", "February", "March", "April", "May", "June", "July"],
-      datasets: [{
-        label: "My First dataset",
-        backgroundColor: 'rgb(255, 99, 132, .5)',
-        borderColor: 'rgb(255, 99, 132, .8)',
-        data: [0, 10, 5, 2, 20, 30, 45],
+            // The data for our dataset
+            data: {
+              labels: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+              datasets: [{
+                label: "Monthly revenue",
+                backgroundColor: 'rgba(62, 84, 111, 0.39)',
+                borderColor: 'rgba(59, 81, 149, 0.86)',
+                data: cleanData(data).dates,
+              }]
+            },
+            // Configuration options go here
+            options: {}
+          });
+          //--------------
       },
-      {
-        label: "My Second dataset",
-        backgroundColor: 'rgba(62, 84, 111, 0.39)',
-        borderColor: 'rgba(59, 81, 149, 0.86)',
-        data: [0, 20, 15, 0, 20, 30, 85],
-      }]
-    },
+      error: function() {
+        alert('errore');
+      }
+    })
+  }
 
-    // Configuration options go here
-    options: {}
-  });
-  //--------------
 
+//ho dovuto fare due chiamate differenti, una per ogni grafico.
+  getData_1()
+  getData_2()
 
 
 
