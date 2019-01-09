@@ -7,8 +7,8 @@ $(document).ready(function() {
 
     var newObject = {}
     for (var i = 0; i < obj_data.length; i++) {
-      console.log(obj_data[i]['salesman']);
-      console.log(obj_data[i]['amount']);
+      // console.log(obj_data[i]['salesman']);
+      // console.log(obj_data[i]['amount']);
 
 
       //questa e' la parte importante: creo un oggetto che mi raggruppa i nomi uguali e mi somma i singoli amount di ogni valore
@@ -25,19 +25,30 @@ $(document).ready(function() {
 
 
     var arrLabels = [];
-    var arrData = []
+    var arrValues = []
     for (var key in newObject) {
         arrLabels.push(key);
-        arrData.push(newObject[key]);
+        arrValues.push(newObject[key]);
     }
-    console.log(arrLabels);
-    console.log(arrData);
-    console.log(newObject);
+    // console.log(arrLabels);
+    // console.log(arrValues);
+    // console.log(newObject);
+    var somma = 0;
+    for (var i = 0; i < arrValues.length; i++) {
+      somma += arrValues[i]
+      // console.log(arrValues[i]);
+    }
+    for (var i = 0; i < arrValues.length; i++) {
+      arrValues[i] = ((arrValues[i]/somma)*100).toFixed(2);
+    }
+    // console.log(somma);
+
+
     //per far uscire da questa funzione i valori ottenuti devo per forza usare return
     //Questa funzione mi ritorna un oggetto.
     return {
       labels: arrLabels,
-      data: arrData,
+      values: arrValues,
     }
   }
 
@@ -46,10 +57,11 @@ $(document).ready(function() {
       url: urlApi,
       method: 'GET',
       success: function(data) {
-        console.log(data);
+        // console.log(data);
         cleanData(data)
         // console.log(cleanData(data).labels);
         // console.log(cleanData(data).data);
+        // console.log(cleanData(data).tot_revenue);
         //****************
         //****GRAFICI*****
         //****************
@@ -67,15 +79,23 @@ $(document).ready(function() {
             labels: cleanData(data).labels,
             datasets: [{
               // label: ,
-              backgroundColor: ['lightblue', 'lightcoral', 'yellow'],
-              // backgroundColor: 'rgb(255, 99, 132, .5)',
-              // borderColor: 'rgb(255, 99, 132)',
-              data: cleanData(data).data,
+              backgroundColor: ['lightblue', 'lightcoral', 'lightyellow', 'lightgreen'],
+              data: cleanData(data).values,
             }]
             //--------------
           },
           // Configuration options go here
-          options: {}
+          options: {
+            //per aggiungere il segno di percentuale con una funzione callback
+            tooltips: {
+              mode: 'label',
+              callbacks: {
+                  label: function(tooltipItem, data) {
+                    return data['datasets'][0]['data'][tooltipItem['index']] + '%';
+                  }
+                }
+            },
+          }
         });
       },
       error: function() {
@@ -94,7 +114,7 @@ $(document).ready(function() {
 
 
 
-  
+
 //GRAFICO A LINEA
   var ctx_2 = $('#lineChart');
   var chart_2 = new Chart(ctx_2, {
