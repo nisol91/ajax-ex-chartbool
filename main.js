@@ -23,7 +23,8 @@ $(document).ready(function() {
       //poi vado a sommare l amount
       newObject[obj_data[i]['salesman']] += obj_data[i]['amount']
 
-      //parte delle date di vendita---
+      //----parte delle date di vendita---
+
       //prima tramite moment.js ottengo solo il valore del mese e lo sostituisco alla data nell oggetto
       var data_vendita = obj_data[i].date
       // console.log(data_vendita);
@@ -32,6 +33,7 @@ $(document).ready(function() {
       // console.log(mese_vendita);
       obj_data[i].date = mese_vendita
       // console.log(obj_data[i].date);
+
       //poi uso lo stesso metodo che avevo utilizzato sopra per i salesman
       if (newObject_2[obj_data[i]['date']] == undefined) {
         newObject_2[obj_data[i]['date']] = 0;
@@ -42,15 +44,20 @@ $(document).ready(function() {
     }
     console.log(newObject_2);
 
+
+    //con questo for in , inserisco le proprieta e i valori del mio newObject in due array distinti
     var arrLabels = [];
     var arrValues = []
     for (var key in newObject) {
-        arrLabels.push(key);
-        arrValues.push(newObject[key]);
+      arrLabels.push(key);
+      arrValues.push(newObject[key]);
     }
     // console.log(arrLabels);
     // console.log(arrValues);
     // console.log(newObject);
+
+    //questi due for servono per movificare i valori di data del diagramma a torta,
+    //per farli diventare valori relativi al totale.
     var somma = 0;
     for (var i = 0; i < arrValues.length; i++) {
       somma += arrValues[i]
@@ -61,10 +68,10 @@ $(document).ready(function() {
     }
     console.log(somma);
 
-    //stessa cosa per il fatturato mensile
+    //altro for in, come prima, per il fatturato mensile
     var arrMonths = []
     for (var key in newObject_2) {
-        arrMonths.push(newObject_2[key]);
+      arrMonths.push(newObject_2[key]);
     }
     console.log(arrMonths);
 
@@ -77,17 +84,27 @@ $(document).ready(function() {
     }
   }
 
+
+  //da qui in poi le chiamate ajax.
+  //***************************//
+  //*******CHIAMATE AJAX*******//
+  //***************************//
+
+
+
   function getData_1() {
     $.ajax({
       url: urlApi,
       method: 'GET',
       success: function(data) {
-        // console.log(data);
+        console.log(data);
         // cleanData(data)
         // cleanData :IMPORTANTE non va assolutamente chiamata! a me basta richiamare i risultati dell oggetto di return, caso per caso.
         // console.log(cleanData(data).labels);
         // console.log(cleanData(data).data);
         // console.log(cleanData(data).dates);
+
+        
         //****************
         //****GRAFICI*****
         //****************
@@ -103,7 +120,8 @@ $(document).ready(function() {
           data: {
             labels: cleanData(data).labels,
             datasets: [{
-              backgroundColor: ['lightblue', 'lightcoral', 'lightyellow', 'lightgreen'],
+              backgroundColor: ['lightblue', 'rgb(38, 109, 111)', 'rgb(93, 115, 164)', 'rgb(136, 154, 185)'],
+              borderColor: ['grey', 'grey', 'grey', 'grey'],
               data: cleanData(data).values,
             }]
           },
@@ -134,12 +152,14 @@ $(document).ready(function() {
       url: urlApi,
       method: 'GET',
       success: function(data) {
-        // console.log(data);
+        console.log(data);
         // cleanData(data)
         // cleanData :IMPORTANTE non va assolutamente chiamata! a me basta richiamare i risultati dell oggetto di return, caso per caso.
         // console.log(cleanData(data).labels);
         // console.log(cleanData(data).data);
         // console.log(cleanData(data).dates);
+
+
         //****************
         //****GRAFICI*****
         //****************
