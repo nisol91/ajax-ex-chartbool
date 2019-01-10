@@ -6,7 +6,10 @@ $(document).ready(function() {
 
       var month_selected = $('.my_select_ii').val();
       var salesman_selected = $('.my_select_i').val();
-      var amount_selected = parseInt($('.my_input').val(), 10);
+      var amount_selected = $('.my_input').val();
+
+      //NB il server ti manda indietro sempre una stringa, anche se parsi. Dovrai modificare il valore una volta
+      //fatta la chiamata get.
 
 
       $.ajax({
@@ -20,6 +23,7 @@ $(document).ready(function() {
         },
         success: function(data) {
 
+          console.log(amount_selected);
         },
         error: function() {
           alert('errore');
@@ -39,6 +43,14 @@ $(document).ready(function() {
       // console.log(obj_data[i]['amount']);
 
 
+      //------------------
+      //una volta chiamati i dati dal server, verifico che amount sia un numero e non una stringa.
+      //se e' una stringa, allora lo parso. non potevo farlo prima perche il server ti manda indietro sempre una stringa,
+      //ma non posso modificarlo per ora perche non e' mio il server.(e non sarei nemmeno capace :))
+        if (Number.isInteger(obj_data[i].amount) === false) {
+          obj_data[i].amount = parseInt(obj_data[i].amount)
+        }
+      //-------------------------------
 
       //questa e' la parte importante: creo un oggetto che mi raggruppa i nomi uguali e mi somma i singoli amount di ogni valore
       if (newObject[obj_data[i]['salesman']] == undefined) {
@@ -189,6 +201,7 @@ $(document).ready(function() {
         // console.log(cleanData(data).labels);
         // console.log(cleanData(data).data);
         // console.log(cleanData(data).dates);
+
 
 
 
