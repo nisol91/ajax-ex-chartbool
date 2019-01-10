@@ -2,8 +2,35 @@ $(document).ready(function() {
 
   var urlApi = 'http://157.230.17.132:4017/sales';
 
+  function addData () {
+
+      var month_selected = $('.my_select_ii').val();
+      var salesman_selected = $('.my_select_i').val();
+      var amount_selected = parseInt($('.my_input').val(), 10);
+
+
+      $.ajax({
+        url: urlApi,
+        method: 'POST',
+        //quando faccio POST, devo sempre mettere dei data da salvare nel server
+        data: {
+          salesman: salesman_selected,
+          amount: amount_selected,
+          date: month_selected,
+        },
+        success: function(data) {
+
+        },
+        error: function() {
+          alert('errore');
+        }
+      })
+  }
 
   function cleanData (obj_data) {
+
+
+
     var newObject = {}
     var newObject_2 = {}
 
@@ -17,11 +44,14 @@ $(document).ready(function() {
       if (newObject[obj_data[i]['salesman']] == undefined) {
         newObject[obj_data[i]['salesman']] = 0;
       }
-      //IMPORTANTISSIMO: in pratica questo if mi dice che: andando a ciclare sui vari oggetti , se salesman non esiste(==undefined), allora
+      //IMPORTANTISSIMO: in pratica questo if mi dice che: andando a ciclare sui vari oggetti ,
+      //se quel salesman (quindi marco, roberto..ecc)non esiste ancora nel nuovo oggetto newObj (==undefined), allora
       //lo vado a posizionare creandolo (cioe ponendo =0) nel nuovo oggetto newObj.
 
       //poi vado a sommare l amount
       newObject[obj_data[i]['salesman']] += obj_data[i]['amount']
+      //nota: questa scrittura significa: le mie proprieta create con l if sopra, sono = a.....
+      //ovvero>>>>> proprieta: valore.
 
       //----parte delle date di vendita---
 
@@ -51,6 +81,7 @@ $(document).ready(function() {
     for (var key in newObject) {
       arrLabels.push(key);
       arrValues.push(newObject[key]);
+      //NB obj['key'] e' il nome della proprieta mentre obj[key] senza apici e' una variabile
     }
     // console.log(arrLabels);
     // console.log(arrValues);
@@ -84,7 +115,6 @@ $(document).ready(function() {
     }
   }
 
-
   //da qui in poi le chiamate ajax.
   //***************************//
   //*******CHIAMATE AJAX*******//
@@ -98,23 +128,24 @@ $(document).ready(function() {
       method: 'GET',
       success: function(data) {
         console.log(data);
+        console.log(cleanData(data));
         // cleanData(data)
         // cleanData :IMPORTANTE non va assolutamente chiamata! a me basta richiamare i risultati dell oggetto di return, caso per caso.
         // console.log(cleanData(data).labels);
         // console.log(cleanData(data).data);
         // console.log(cleanData(data).dates);
 
-        
+
         //****************
         //****GRAFICI*****
         //****************
 
-        //TORTA
+        //TORTA/DOUGHNUT
         var ctx_pie = $('#myChart_pie');
 
         var chartPie = new Chart(ctx_pie, {
           // The type of chart we want to create
-          type: 'pie',
+          type: 'doughnut',
 
           // The data for our dataset
           data: {
@@ -160,6 +191,7 @@ $(document).ready(function() {
         // console.log(cleanData(data).dates);
 
 
+
         //****************
         //****GRAFICI*****
         //****************
@@ -197,6 +229,13 @@ $(document).ready(function() {
   getData_1()
   getData_2()
 
+
+  //AGGIUNTA DATI DI VENDITA
+  //se clicco add button, allora mi aggiunge i dati di vendita
+  //lo metto qui perche prima aggiungo i dati all DB, poi faccio tutta la trafila per renderli leggibili.
+  $('.my_button').click(function() {
+    addData()
+  });
 
 
 
