@@ -4,32 +4,34 @@ $(document).ready(function() {
 
   function addData () {
 
-      var month_selected = $('.my_select_ii').val();
-      var salesman_selected = $('.my_select_i').val();
-      var amount_selected = $('.my_input').val();
+    var month_selected = $('.my_select_ii').val();
+    var salesman_selected = $('.my_select_i').val();
+    var amount_selected = $('.my_input').val();
 
-      //NB il server ti manda indietro sempre una stringa, anche se parsi. Dovrai modificare il valore una volta
-      //fatta la chiamata get.
+    //NB il server ti manda indietro sempre una stringa, anche se parsi. Dovrai modificare il valore una volta
+    //fatta la chiamata get.
 
 
-      $.ajax({
-        url: urlApi,
-        method: 'POST',
-        //quando faccio POST, devo sempre mettere dei data da salvare nel server
-        data: {
-          salesman: salesman_selected,
-          amount: amount_selected,
-          date: month_selected,
-        },
-        success: function(data) {
+    $.ajax({
+      url: urlApi,
+      method: 'POST',
+      //quando faccio POST, devo sempre mettere dei data da salvare nel server
+      data: {
+        salesman: salesman_selected,
+        amount: amount_selected,
+        date: month_selected,
+      },
+      success: function(data) {
 
-          console.log(amount_selected);
-        },
-        error: function() {
-          alert('errore');
-        }
-      })
+        console.log(amount_selected);
+      },
+      error: function() {
+        alert('errore');
+      }
+    })
   }
+  //-----------------------------
+
 
   function cleanData (obj_data) {
 
@@ -43,15 +45,18 @@ $(document).ready(function() {
       // console.log(obj_data[i]['amount']);
 
 
-      //------------------
+      //------------------***********************
       //una volta chiamati i dati dal server, verifico che amount sia un numero e non una stringa.
       //se e' una stringa, allora lo parso. non potevo farlo prima perche il server ti manda indietro sempre una stringa,
       //ma non posso modificarlo per ora perche non e' mio il server.(e non sarei nemmeno capace :))
         if (Number.isInteger(obj_data[i].amount) === false) {
           obj_data[i].amount = parseInt(obj_data[i].amount)
         }
-      //-------------------------------
+      //------------------***********************
 
+
+
+      //**************************IMPORTANTE*****************************************
       //questa e' la parte importante: creo un oggetto che mi raggruppa i nomi uguali e mi somma i singoli amount di ogni valore
       if (newObject[obj_data[i]['salesman']] == undefined) {
         newObject[obj_data[i]['salesman']] = 0;
@@ -64,6 +69,9 @@ $(document).ready(function() {
       newObject[obj_data[i]['salesman']] += obj_data[i]['amount']
       //nota: questa scrittura significa: le mie proprieta create con l if sopra, sono = a.....
       //ovvero>>>>> proprieta: valore.
+
+      //*******************************************************************
+
 
       //----parte delle date di vendita---
 
@@ -126,6 +134,8 @@ $(document).ready(function() {
       dates: arrMonths,
     }
   }
+  //---------------------------------------
+
 
   //da qui in poi le chiamate ajax.
   //***************************//
@@ -197,6 +207,7 @@ $(document).ready(function() {
       success: function(data) {
         console.log(data);
         // cleanData(data)
+        //**************************************!!!!!!!!!!!!!!!!!!!
         // cleanData :IMPORTANTE non va assolutamente chiamata! a me basta richiamare i risultati dell oggetto di return, caso per caso.
         // console.log(cleanData(data).labels);
         // console.log(cleanData(data).data);
@@ -238,7 +249,7 @@ $(document).ready(function() {
   }
 
 
-//ho dovuto fare due chiamate differenti, una per ogni grafico.
+  //ho dovuto fare due chiamate differenti, una per ogni grafico.
   getData_1()
   getData_2()
 
