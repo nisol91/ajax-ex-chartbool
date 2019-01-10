@@ -259,6 +259,8 @@ $(document).ready(function() {
   //lo metto qui perche prima aggiungo i dati all DB, poi faccio tutta la trafila per renderli leggibili.
   $('.my_button').click(function() {
     addData()
+    getData_1()
+    getData_2()
   });
 
 
