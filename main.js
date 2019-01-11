@@ -358,7 +358,6 @@ $(document).ready(function() {
   getData_3()
 
 
-
   //AGGIUNTA DATI DI VENDITA
   //se clicco add button, allora mi aggiunge i dati di vendita
   //lo metto qui perche prima aggiungo i dati all DB, poi faccio tutta la trafila per renderli leggibili.

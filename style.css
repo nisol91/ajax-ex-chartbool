@@ -54,6 +54,7 @@
   border: .5px solid grey;
   background: rgba(109, 170, 177, 0.77);
   border-radius: 5px;
+  cursor: pointer;
 }
 .add_d {
   display: flex;
