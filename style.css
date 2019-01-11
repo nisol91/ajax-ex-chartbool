@@ -13,17 +13,9 @@
   align-items: center;
   background: lightgrey;
 }
-.linee {
+.linee, .torta, .barre {
   width: 500px;
-  height: 500px;
-}
-.torta {
-  width: 500px;
-  height: 500px;
-}
-.barre {
-  width: 500px;
-  height: 500px;
+  height: 300px;
 }
 .nav {
   width: 100%;

@@ -39,6 +39,8 @@ $(document).ready(function() {
   //-----------------------------
 
 
+
+
   function cleanData (obj_data) {
 
 
@@ -57,7 +59,13 @@ $(document).ready(function() {
       //una volta chiamati i dati dal server, verifico che amount sia un numero e non una stringa.
       //se e' una stringa, allora lo parso. non potevo farlo prima perche il server ti manda indietro sempre una stringa,
       //ma non posso modificarlo per ora perche non e' mio il server.(e non sarei nemmeno capace :))
-        if (Number.isInteger(obj_data[i].amount) === false) {
+
+        //altro modo, ma deprecato perche cosi non potrei inserire numeri con la virgola.
+        // if (Number.isInteger(obj_data[i].amount) === false) {
+        //   obj_data[i].amount = parseInt(obj_data[i].amount)
+        // }
+
+        if (typeof obj_data[i].amount != 'number') {
           obj_data[i].amount = parseInt(obj_data[i].amount)
         }
       //------------------***********************
