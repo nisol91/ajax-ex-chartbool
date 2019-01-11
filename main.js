@@ -1,5 +1,11 @@
 $(document).ready(function() {
 
+
+  //PREMESSA*******************importante*****
+  /*Bisogna ricordare che ogni grafico fa una chiamata differente, e che le chiamate ai dati
+  si fanno fuori da tutto, in fondo. Inoltre bisogna tenere a mente che sono le GET stesse
+  che richiamano come dati, proprieta' dell oggetto funzione cleanData.*/
+
   var urlApi = 'http://157.230.17.132:4017/sales';
 
   function addData () {
@@ -39,6 +45,8 @@ $(document).ready(function() {
 
     var newObject = {}
     var newObject_2 = {}
+    var newObject_3 = {}
+
 
     for (var i = 0; i < obj_data.length; i++) {
       // console.log(obj_data[i]['salesman']);
@@ -84,15 +92,24 @@ $(document).ready(function() {
       obj_data[i].date = mese_vendita
       // console.log(obj_data[i].date);
 
-      //poi uso lo stesso metodo che avevo utilizzato sopra per i salesman
+      //poi, per l ammontare mensile uso lo stesso metodo che avevo utilizzato sopra per i salesman
       if (newObject_2[obj_data[i]['date']] == undefined) {
         newObject_2[obj_data[i]['date']] = 0;
       }
 
       newObject_2[obj_data[i]['date']] += obj_data[i]['amount']
 
+      //faccio lo stesso per il numero di vendite, cosi trovo il numero di vendite mensili
+      if (newObject_3[obj_data[i]['date']] == undefined) {
+        newObject_3[obj_data[i]['date']] = 0;
+      }
+
+      newObject_3[obj_data[i]['date']] += 1
     }
-    console.log(newObject_2);
+    // console.log(newObject);
+    // console.log(newObject_2);
+    console.log(newObject_3);
+
 
 
     //con questo for in , inserisco le proprieta e i valori del mio newObject in due array distinti
@@ -126,12 +143,46 @@ $(document).ready(function() {
     }
     console.log(arrMonths);
 
+    //altro for in, come prima, per le vendite mensili
+
+    var numeri = []
+    for (var key in newObject_3) {
+      numeri.push(newObject_3[key])
+    }
+    console.log(numeri);
+
+    //ora passo da vendite mensili a trimestrali (fa schifo ma non saprei come altro fare)
+    var pos_1 = 0
+    var pos_2 = 0
+    var pos_3 = 0
+    var pos_4 = 0
+
+    var numeri_trim = []
+    for (var i = 0; i < 3; i++) {
+      pos_1 += numeri[i]
+    }
+    numeri_trim.push(pos_1)
+    for (var i = 3; i < 6; i++) {
+      pos_2 += numeri[i]
+    }
+    numeri_trim.push(pos_2)
+    for (var i = 6; i < 9; i++) {
+      pos_3 += numeri[i]
+    }
+    numeri_trim.push(pos_3)
+    for (var i = 9; i < 12; i++) {
+      pos_4 += numeri[i]
+    }
+    numeri_trim.push(pos_4)
+    console.log(numeri_trim);
+
     //per far uscire da questa funzione i valori ottenuti devo per forza usare return
     //Questa funzione mi ritorna un oggetto.
     return {
       labels: arrLabels,
       values: arrValues,
       dates: arrMonths,
+      numero: numeri_trim,
     }
   }
   //---------------------------------------
@@ -248,10 +299,56 @@ $(document).ready(function() {
     })
   }
 
+  function getData_3() {
+    $.ajax({
+      url: urlApi,
+      method: 'GET',
+      success: function(data) {
+        console.log(data);
+        // cleanData(data)
+        //**************************************!!!!!!!!!!!!!!!!!!!
+        // cleanData :IMPORTANTE non va assolutamente chiamata! a me basta richiamare i risultati dell oggetto di return, caso per caso.
+        // console.log(cleanData(data).labels);
+        // console.log(cleanData(data).data);
+        // console.log(cleanData(data).dates);
+
+
+
+
+        //****************
+        //****GRAFICI*****
+        //****************
+
+
+        //GRAFICO A BARRE
+        var ctx_3 = $('#myChart_bars');
+        var myBarChart = new Chart(ctx_3, {
+          type: 'bar',
+          data: {
+            labels: ["1st", "2nd", "3rd", "4th"],
+            // labels: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+            datasets: [{
+              label: "Numero di vendite per trimestre",
+              backgroundColor: 'rgba(62, 84, 111, 0.39)',
+              borderColor: 'rgba(59, 81, 149, 0.86)',
+              data: cleanData(data).numero,
+            }],
+          },
+        });
+          //--------------
+      },
+      error: function() {
+        alert('errore');
+      }
+    })
+  }
+
 
   //ho dovuto fare due chiamate differenti, una per ogni grafico.
   getData_1()
   getData_2()
+  getData_3()
+
 
 
   //AGGIUNTA DATI DI VENDITA
@@ -261,6 +358,8 @@ $(document).ready(function() {
     addData()
     getData_1()
     getData_2()
+    getData_3()
+
   });
 
 
