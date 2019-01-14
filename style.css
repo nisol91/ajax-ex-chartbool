@@ -5,7 +5,7 @@
   font-family: 'Lato', sans-serif;
 }
 .container {
-  width: 100vw;
+  width: 100%;
   height: auto;
   display: flex;
   flex-direction: column;
@@ -18,7 +18,7 @@
   height: 300px;
 }
 .nav {
-  width: 100%;
+  width: 80%;
   height: 100px;
   display: flex;
   justify-content: space-around;

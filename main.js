@@ -351,14 +351,17 @@ $(document).ready(function() {
     })
   }
 
-
+  //****************************
+  //
+  //QUI, FUORI DA TUTTO, RICHIAMO TUTTE LE FUNZIONI
+  //
   //ho dovuto fare due chiamate differenti, una per ogni grafico.
   getData_1()
   getData_2()
   getData_3()
 
 
-  //AGGIUNTA DATI DI VENDITA
+  //AGGIUNTA DATI DI VENDITA AL CLICK
   //se clicco add button, allora mi aggiunge i dati di vendita
   //lo metto qui perche prima aggiungo i dati all DB, poi faccio tutta la trafila per renderli leggibili.
   $('.my_button').click(function() {
